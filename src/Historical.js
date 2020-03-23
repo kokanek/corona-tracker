@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { Box, } from 'grommet';
+import React from 'react';
+import rp from 'request-promise';
 import {
   G2,
   Chart,
@@ -16,12 +16,24 @@ import {
   Util
 } from "bizcharts";
 
-export class Dashboard extends PureComponent {
+export class Dashboard extends React.Component {
+
+  state = {
+    data: [],
+  }
+
+  async componentDidMount() {
+    let res2 = await rp('https://corona.lmao.ninja/historical');
+    res2 = await JSON.parse(res2);
+    res2 = res2.filter(item => item.country === 'india');
+    this.setState({ data: res2});
+  }
+
   render() {
-    console.log('props in historical: ', this.props.data);
+    console.log('props in historical: ', this.state.data);
     let timeline = {};
-    if(Array.isArray(this.props.data) && this.props.data.length > 0) {
-      timeline = this.props.data[0].timeline;
+    if (Array.isArray(this.state.data) && this.state.data.length > 0) {
+      timeline = this.state.data[0].timeline;
     }
     let datum = [];
     console.log('timeline: ', timeline);
@@ -61,10 +73,7 @@ export class Dashboard extends PureComponent {
             formatter: (val, key, index) => (index % 7 === 0) ? val : '',
             autoRotate: false
           }}/>
-          <Axis
-            name="value"
-            
-          />
+          <Axis name="value" />
           <Tooltip
             crosshairs={{
               type: "y"
@@ -76,6 +85,17 @@ export class Dashboard extends PureComponent {
             size={2}
             color={"type"}
             shape={"smooth"}
+          />
+          <Geom
+            type="point"
+            position="date*value"
+            size={4}
+            shape={"circle"}
+            color={"type"}
+            style={{
+              stroke: "#fff",
+              lineWidth: 1
+            }}
           />
         </Chart>
       </div>
