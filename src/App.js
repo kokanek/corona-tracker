@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, Heading, Collapsible, Grommet, ResponsiveContext, Layer } from 'grommet';
 import { Menu, CloudDownload } from 'grommet-icons';
 import Dashboard from './Dashboard';
+import Historical from './Historical';
 import rp from 'request-promise';
 
 const theme = {
@@ -17,11 +18,17 @@ const theme = {
   },
 };
 
-async function onClickGetData(callback) {
+async function onClickGetData(callback1, callback2) {
   let res = await rp('https://corona.lmao.ninja/countries');
   res = await JSON.parse(res);
-  callback(res);
+  res.forEach(item => ({ ...item, percentageIncrease: item.todayCases*100/item.cases }))
+  callback1(res);
   //console.log('clicked get data', res);
+
+  let res2 = await rp('https://corona.lmao.ninja/historical');
+  res2 = await JSON.parse(res2);
+  res2 = res2.filter(item => item.country === 'india');
+  callback2(res2);
 }
 
 const AppBar = (props) => (
@@ -41,6 +48,7 @@ const AppBar = (props) => (
 function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [historicalData, setHistoricalData] = useState([]);
 
   console.log('table data: ', tableData);
 
@@ -57,7 +65,7 @@ function App() {
               <Heading level='3' margin='none'>Corona Tracker Dashboard</Heading>
               <Button
                 icon={<CloudDownload />}
-                onClick={() => onClickGetData(setTableData)}
+                onClick={() => onClickGetData(setTableData, setHistoricalData)}
               />
             </AppBar>
             <Box direction='row' flex overflow={{ horizontal: 'hidden' }}>
@@ -82,6 +90,7 @@ function App() {
                 </Layer>
               )}
               <Box align='center' justify='strech' margin={{vertical: 'large'}}>
+                <Historical data={historicalData}/>
                 <Dashboard tableData={tableData}/>
               </Box>
             </Box >
