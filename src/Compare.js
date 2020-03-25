@@ -77,7 +77,7 @@ export class Dashboard extends React.Component {
     return (
       <Layout className="site-layout">
         <div className="site-layout-background" style={{display: 'flex', flexDirection:'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-          <PageHeader title='Corona Tracker Dashboard' subTitle='Trend by country :' ></PageHeader>
+          <PageHeader title='Compare Countries' subTitle='Add countries to compare :' ></PageHeader>
           <Select
             showSearch
             style={{ width: 200 }}
@@ -99,37 +99,7 @@ export class Dashboard extends React.Component {
             <Spin size='large' />
           </div> :
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360, margin: '16px 0' }}>
-            <Chart height={800} width={1000} data={datum} scale={cols} forceFit>
-              <Legend />
-              <Axis name="date" label={{
-                formatter: (val, key, index) => (index % 7 === 0) ? val : '',
-                autoRotate: false
-              }} />
-              <Axis name="value" />
-              <Tooltip
-                crosshairs={{
-                  type: "y"
-                }}
-              />
-              <Geom
-                type="line"
-                position="date*value"
-                size={2}
-                color={["type", ['#40a9ff', '#ff4d4f', '#73d13d']]}
-                shape={"smooth"}
-              />
-              <Geom
-                type="point"
-                position="date*value"
-                size={4}
-                shape={"circle"}
-                color={["type", ['#40a9ff', '#ff4d4f', '#73d13d']]}
-                style={{
-                  stroke: "#fff",
-                  lineWidth: 1
-                }}
-              />
-            </Chart>
+            Work in progress
           </div>}
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by <a href="https://github.com/kokanek">kokanek</a> using data from <a href="https://www.worldometers.info/coronavirus/">Worldometers</a></Footer>

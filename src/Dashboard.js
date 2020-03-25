@@ -1,21 +1,21 @@
 import React, { PureComponent } from 'react';
-import { DataTable, Text, Meter, Box, Accordion, AccordionPanel} from 'grommet';
-import { Layout, Menu, PageHeader, Select } from 'antd';
+import { DataTable, Text, Meter, Box } from 'grommet';
+import { Layout, PageHeader, Spin } from 'antd';
 import rp from 'request-promise';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer } = Layout;
 
 export class Dashboard extends PureComponent {
 
   state = {
     data: [],
+    loading: true
   }
 
   async componentDidMount() {
     let res = await rp('https://corona.lmao.ninja/countries');
     res = await JSON.parse(res);
-    res.forEach(item => ({ ...item, percentageIncrease: item.todayCases * 100 / item.cases }))
-    this.setState({ data: res });
+    this.setState({ data: res, loading: false });
   }
 
   render() {
@@ -28,7 +28,11 @@ export class Dashboard extends PureComponent {
           <PageHeader title='Detailed tracker' subTitle='All data' ></PageHeader>
         </Header>
         <Content style={{ margin: '0 16px' }}>
-          <div className="site-layout-background" style={{ padding: 24, minHeight: 360, margin: '16px 0' }}>
+          {this.state.loading ?
+          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop:'200px'}}>
+            <Spin size='large' />
+          </div>
+          :<div className="site-layout-background" style={{ padding: 24, minHeight: 360, margin: '16px 0' }}>
             <DataTable
               columns={[
                 {
@@ -56,24 +60,22 @@ export class Dashboard extends PureComponent {
                   sortable: true
                 },
                 {
+                  property: 'todayDeaths',
+                  header: <Text>Today Deaths</Text>,
+                  primary: false,
+                  sortable: true
+                },
+                {
                   property: 'recovered',
                   header: <Text>Recovered</Text>,
                   primary: false,
                   sortable: true
                 },
                 {
-                  property: 'percentage',
+                  property: 'percentageIncrease',
                   header: 'Percentage increase',
-                  render: datum => (
-                    <Box pad={{ vertical: 'xsmall' }}>
-                      <Meter
-                        values={[{ value: datum.todayCases / datum.cases * 100 }]}
-                        thickness='small'
-                        size='small'
-                        round={true}
-                      />
-                    </Box>
-                  ),
+                  render: datum => `${(datum.todayCases / datum.cases * 100).toFixed(2)}%`,
+                  sortable: true
                 },
               ]}
               data={tableData}
@@ -86,7 +88,7 @@ export class Dashboard extends PureComponent {
               sortable={true}
               size='large'
             />
-          </div>
+          </div>}
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
       </Layout>
