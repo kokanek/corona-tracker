@@ -91,7 +91,7 @@ export class Dashboard extends React.Component {
           >
             {this.state.countries.map(country => <Option value={`${country.key}`} key={`${country.key}`}>{`${country.displayValue}`}</Option>)}
           </Select>
-          <Text level={4} style={{ padding: 0, margin: '0 0 0 300px' }}>(Data based on GMT+0 and may be delayed)</Text>
+          <Text level={4} style={{ padding: 0, margin: '0 0 0 400px' }}>(Data based on GMT+0 and may be delayed)</Text>
         </div>
         <Content style={{ margin: '0 16px' }}>
           {this.state.loading ? 

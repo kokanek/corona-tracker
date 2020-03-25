@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
-import { DataTable, Text, Meter, Box } from 'grommet';
-import { Layout, PageHeader, Spin } from 'antd';
+import { DataTable, Text } from 'grommet';
+import { Layout, PageHeader, Spin, Typography } from 'antd';
 import rp from 'request-promise';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
+const { Text: TXT } = Typography;
 
 export class Dashboard extends PureComponent {
 
@@ -24,9 +25,10 @@ export class Dashboard extends PureComponent {
 
     return (
       <Layout className="site-layout">
-        <Header className="site-layout-background">
+        <div className="site-layout-background" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
           <PageHeader title='Detailed tracker' subTitle='All data' ></PageHeader>
-        </Header>
+          <TXT level={4} style={{ padding: 0, margin: '0 0 0 300px' }}>(Data based on GMT+0 and may be delayed)</TXT>
+        </div>
         <Content style={{ margin: '0 16px' }}>
           {this.state.loading ?
           <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop:'200px'}}>
@@ -90,7 +92,7 @@ export class Dashboard extends PureComponent {
             />
           </div>}
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by <a href="https://github.com/kokanek">kokanek</a> using data from <a href="https://www.worldometers.info/coronavirus/">Worldometers</a></Footer>
       </Layout>
       
     )

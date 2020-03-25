@@ -39,7 +39,7 @@ class App2 extends React.Component {
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
             <Menu.Item key="1" onClick={() => this.setState({display: 'graph'})}>
               <FundProjectionScreenOutlined style={{fontSize: '24px'}}/>
-              <span>Dashboard</span>
+              <span>Trend</span>
             </Menu.Item>
             <Menu.Item key="2" onClick={() => this.setState({ display: 'table' })}>
               <TableOutlined style={{ fontSize: '24px' }} />
