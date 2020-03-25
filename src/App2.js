@@ -12,6 +12,7 @@ import 'antd/dist/antd.css';
 import './index.css';
 
 import Historical from './Historical';
+import Dashboard from './Dashboard';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -19,6 +20,7 @@ const { SubMenu } = Menu;
 class App2 extends React.Component {
   state = {
     collapsed: false,
+    display: 'graph'
   };
 
   onCollapse = collapsed => {
@@ -31,13 +33,13 @@ class App2 extends React.Component {
       <Layout style={{ minHeight: '100vh' }}>
         <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
           <div className="logo" />
-          <div style={{margin: '74px'}} />
+          <div style={{margin: '12px'}} />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1">
+            <Menu.Item key="1" onClick={() => this.setState({display: 'graph'})}>
               <PieChartOutlined />
               <span>Dashboard</span>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="2" onClick={() => this.setState({ display: 'table' })}>
               <DesktopOutlined />
               <span>Table</span>
             </Menu.Item>
@@ -64,7 +66,8 @@ class App2 extends React.Component {
               <Breadcrumb.Item>Bill</Breadcrumb.Item>
             </Breadcrumb> */}
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360, margin: '16px 0' }}>
-              <Historical />
+              {this.state.display === 'graph' && <Historical />}
+              {this.state.display === 'table' && <Dashboard />}
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>

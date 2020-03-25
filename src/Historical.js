@@ -23,10 +23,10 @@ export class Dashboard extends React.Component {
   }
 
   async componentDidMount() {
-    let res2 = await rp('https://corona.lmao.ninja/historical');
-    res2 = await JSON.parse(res2);
-    res2 = res2.filter(item => item.country === 'india');
-    this.setState({ data: res2});
+    let res = await rp('https://corona.lmao.ninja/historical');
+    res = await JSON.parse(res);
+    res = res.filter(item => item.country === 'india');
+    this.setState({ data: res});
   }
 
   render() {
@@ -83,7 +83,7 @@ export class Dashboard extends React.Component {
             type="line"
             position="date*value"
             size={2}
-            color={"type"}
+            color={["type", ['#40a9ff', '#ff4d4f', '#73d13d']]}
             shape={"smooth"}
           />
           <Geom
@@ -91,7 +91,7 @@ export class Dashboard extends React.Component {
             position="date*value"
             size={4}
             shape={"circle"}
-            color={"type"}
+            color={["type", ['#40a9ff', '#ff4d4f', '#73d13d']]}
             style={{
               stroke: "#fff",
               lineWidth: 1
