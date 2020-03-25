@@ -31,7 +31,7 @@ export class Dashboard extends React.Component {
   async componentDidMount() {
     let res = await rp('https://corona.lmao.ninja/historical');
     res = await JSON.parse(res);
-    const countries = res.map(item => ({name: item.province? `${item.country} (${item.province})` : item.country, key: item.country}));
+    const countries = res.map(item => ({ country: item.country, key: `${item.country}${item.province? `${item.province}` : ''}`, displayValue: `${item.country}${item.province ?` (${item.province})` : ''}` }));
     this.setState({ data: res, countries: countries});
   }
 
@@ -41,7 +41,10 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-    const countryData = this.state.data.filter(item => item.country === this.state.selectedCountry);
+    const countryData = this.state.data.filter(item => {
+      const countryKey = `${item.country}${item.province||''}` 
+      return countryKey == this.state.selectedCountry
+    });
     console.log('props countries: ', this.state.countries);
     let timeline = {};
     if (Array.isArray(countryData) && countryData.length > 0) {
@@ -92,7 +95,7 @@ export class Dashboard extends React.Component {
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
           >
-            {this.state.countries.map(country => <Option value={country.key} key={country.name}>{country.name}</Option>)}
+            {this.state.countries.map(country => <Option value={`${country.key}`} key={`${country.key}`}>{`${country.displayValue}`}</Option>)}
           </Select>
         </div>
         <Content style={{ margin: '0 16px' }}>
