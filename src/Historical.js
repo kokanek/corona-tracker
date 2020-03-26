@@ -23,7 +23,7 @@ export class Dashboard extends React.Component {
   }
 
   async componentDidMount() {
-    let res = await rp('https://corona.lmao.ninja/historical');
+    let res = await rp('https://corona.lmao.ninja/v2/historical');
     res = await JSON.parse(res);
     const countries = res.map(item => ({ country: item.country, key: `${item.country}${item.province? `${item.province}` : ''}`, displayValue: `${item.country}${item.province ?` (${item.province})` : ''}` }));
     this.setState({ data: res, countries: countries, loading: false});

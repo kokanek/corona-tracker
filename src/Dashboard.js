@@ -16,6 +16,7 @@ export class Dashboard extends PureComponent {
   async componentDidMount() {
     let res = await rp('https://corona.lmao.ninja/countries');
     res = await JSON.parse(res);
+    res = res.map(datum => ({ ...datum, percentageIncrease: Number((Number(datum.todayCases) / Number(datum.cases) * 100).toFixed(2))}))
     this.setState({ data: res, loading: false });
   }
 
@@ -76,7 +77,6 @@ export class Dashboard extends PureComponent {
                 {
                   property: 'percentageIncrease',
                   header: 'Percentage increase',
-                  render: datum => `${(datum.todayCases / datum.cases * 100).toFixed(2)}%`,
                   sortable: true
                 },
               ]}
