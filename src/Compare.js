@@ -1,6 +1,6 @@
 import React from 'react';
 import rp from 'request-promise';
-import { Layout, PageHeader, Select, Spin, Typography } from 'antd';
+import { Layout, PageHeader, Select, Spin, Typography, Tag, Radio } from 'antd';
 import {
   Chart,
   Geom,
@@ -18,56 +18,50 @@ export class Dashboard extends React.Component {
   state = {
     data: [],
     countries: [],
-    selectedCountry: 'india',
+    graphType: 'cases',
+    selectedCountries: ['india'],
     loading: true
   }
 
   async componentDidMount() {
-    let res = await rp('https://corona.lmao.ninja/historical');
+    let res = await rp('https://corona.lmao.ninja/v2/historical');
     res = await JSON.parse(res);
     const countries = res.map(item => ({ country: item.country, key: `${item.country}${item.province? `${item.province}` : ''}`, displayValue: `${item.country}${item.province ?` (${item.province})` : ''}` }));
     this.setState({ data: res, countries: countries, loading: false});
   }
 
-  onChange = (elem, val) => {
-    console.log('checked: ', elem, val);
-    this.setState({ selectedCountry: elem})
+  onChange = (countryKey, val) => {
+    console.log('checked: ', countryKey, val);
+    this.setState((state) => ({ selectedCountries: [...state.selectedCountries, countryKey ]}))
+  }
+
+  onClickCloseTag = (removedTag) => {
+    const tagKey = `${removedTag.country}${removedTag.province ? `${removedTag.province}` : ''}`;
+    const selectedCountries = this.state.selectedCountries.filter(tag => tag !== tagKey)
+    this.setState({ selectedCountries: selectedCountries })
+  }
+
+  onChangeRadio = (elem) => {
+    this.setState({ graphType: elem.target.value })
   }
 
   render() {
     const countryData = this.state.data.filter(item => {
       const countryKey = `${item.country}${item.province||''}` 
-      return countryKey == this.state.selectedCountry
+      return this.state.selectedCountries.includes(countryKey);
     });
-    console.log('props countries: ', this.state.countries);
-    let timeline = {};
-    if (Array.isArray(countryData) && countryData.length > 0) {
-      timeline = countryData[0].timeline;
-    }
+    console.log('selected countries: ', countryData);
     let datum = [];
-    console.log('timeline: ', timeline);
-    for (let key in timeline.cases) {
-      datum.push({
-        date: key,
-        type: 'cases',
-        value: Number(timeline.cases[key])
-      })
-    }
-    for (let key in timeline.deaths) {
-      datum.push({
-        date: key,
-        type: 'deaths',
-        value: Number(timeline.deaths[key])
-      })
-    }
-    for (let key in timeline.recovered) {
-      datum.push({
-        date: key,
-        type: 'recovered',
-        value: Number(timeline.recovered[key])
-      })
-    }
-    console.log('datum: ', datum)
+    countryData.forEach(country => {
+      const { timeline } = country;
+      for (let key in timeline.cases) {
+        datum.push({
+          date: key,
+          type: country.country,
+          value: Number(timeline[this.state.graphType][key])
+        })
+      }
+    })
 
     const cols = {
       date: {
@@ -83,7 +77,7 @@ export class Dashboard extends React.Component {
             style={{ width: 200 }}
             placeholder="Select a country"
             optionFilterProp="children"
-            value={this.state.selectedCountry}
+            value={this.state.selectedCountries}
             onChange={this.onChange}
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -91,7 +85,16 @@ export class Dashboard extends React.Component {
           >
             {this.state.countries.map(country => <Option value={`${country.key}`} key={`${country.key}`}>{`${country.displayValue}`}</Option>)}
           </Select>
-          <Text level={4} style={{ padding: 0, margin: '0 0 0 400px' }}>(Data based on GMT+0 and may be delayed)</Text>
+          <div style={{ margin:'0 0 0 16px'}} >
+            <Radio.Group onChange={this.onChangeRadio} value={this.state.graphType}>
+              <Radio value='cases'>Cases</Radio>
+              <Radio value='deaths'>Deaths</Radio>
+            </Radio.Group>
+          </div>
+          <Text level={4} style={{ padding: 0, margin: '0 0 0 100px' }}>(Data based on GMT+0 and may be delayed)</Text>
+        </div>
+        <div className="site-layout-background" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', margin: '16px 16px', padding: '16px 16px' }}>
+          {countryData.map(country => <Tag closable={true} onClose={() => this.onClickCloseTag(country)} key={`${country.country}${country.province}`} >{`${country.country}${country.province ? `${country.province}` : ''}`}</Tag>)}
         </div>
         <Content style={{ margin: '0 16px' }}>
           {this.state.loading ? 
@@ -99,7 +102,37 @@ export class Dashboard extends React.Component {
             <Spin size='large' />
           </div> :
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360, margin: '16px 0' }}>
-            Work in progress
+              <Chart height={800} width={1000} data={datum} scale={cols} forceFit>
+                <Legend />
+                <Axis name="date" label={{
+                  formatter: (val, key, index) => (index % 7 === 0) ? val : '',
+                  autoRotate: false
+                }} />
+                <Axis name="value" />
+                <Tooltip
+                  crosshairs={{
+                    type: "y"
+                  }}
+                />
+                <Geom
+                  type="line"
+                  position="date*value"
+                  size={2}
+                  color={"type"}
+                  shape={"smooth"}
+                />
+                <Geom
+                  type="point"
+                  position="date*value"
+                  size={4}
+                  shape={"circle"}
+                  color={"type"}
+                  style={{
+                    stroke: "#fff",
+                    lineWidth: 1
+                  }}
+                />
+              </Chart>
           </div>}
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by <a href="https://github.com/kokanek">kokanek</a> using data from <a href="https://www.worldometers.info/coronavirus/">Worldometers</a></Footer>
