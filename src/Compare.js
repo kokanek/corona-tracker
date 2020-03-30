@@ -19,7 +19,7 @@ export class Dashboard extends React.Component {
     data: [],
     countries: [],
     graphType: 'cases',
-    selectedCountries: ['india'],
+    selectedCountries: ['India'],
     loading: true
   }
 
@@ -89,9 +89,10 @@ export class Dashboard extends React.Component {
             <Radio.Group onChange={this.onChangeRadio} value={this.state.graphType}>
               <Radio value='cases'>Cases</Radio>
               <Radio value='deaths'>Deaths</Radio>
+              <Radio value='recovered'>Recovered</Radio>
             </Radio.Group>
           </div>
-          <Text level={4} style={{ padding: 0, margin: '0 0 0 100px' }}>(Data based on GMT+0 and may be delayed)</Text>
+          <Text level={4} style={{ padding: 0, margin: '0 0 0 10px' }}>(Data based on GMT+0 and may be delayed)</Text>
         </div>
         <div className="site-layout-background" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', margin: '16px 16px', padding: '16px 16px' }}>
           {countryData.map(country => <Tag closable={true} onClose={() => this.onClickCloseTag(country)} key={`${country.country}${country.province}`} >{`${country.country}${country.province ? `${country.province}` : ''}`}</Tag>)}
@@ -120,7 +121,7 @@ export class Dashboard extends React.Component {
                   size={2}
                   color={"type"}
                   shape={"smooth"}
-                />
+             />
                 <Geom
                   type="point"
                   position="date*value"

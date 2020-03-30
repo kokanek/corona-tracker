@@ -18,7 +18,7 @@ export class Dashboard extends React.Component {
   state = {
     data: [],
     countries: [],
-    selectedCountry: 'india',
+    selectedCountry: 'India',
     loading: true
   }
 
